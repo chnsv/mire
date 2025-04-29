@@ -56,7 +56,7 @@ parse_room_info(Messages, Enemies) :-
     (   sub_string(LastLine, _, _, _, "Enemies"),
         parse_enemies(LastLine, Enemies)
     ->  true
-    ;   Enemies = [] % Если строка с врагами не найдена
+    ;   Enemies = [zombie,skelet,lol] % Если строка с врагами не найдена
     ).
 
 parse_enemies(Line, Enemies) :-
@@ -72,7 +72,7 @@ parse_enemies(Line, Enemies) :-
         split_string(EnemiesStr, ", ", "", EnemiesList),
         exclude(==(""), EnemiesList, Enemies)
     ;   format('Debug: Not enough parts after splitting~n', []),
-        Enemies = []
+        Enemies = [zombie,skelet,lol]
     ).
 
 % Вспомогательный предикат для замены всех вхождений подстроки кроме первого
