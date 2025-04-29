@@ -10,7 +10,8 @@
             :desc (:desc room)
             :exits (ref (:exits room))
             :items (ref (or (:items room) #{}))
-            :inhabitants (ref #{})}})))
+            :inhabitants (ref #{})
+            :enemies (ref (or (:enemies room) #{}))}})))
 
 (defn load-rooms
   "Given a dir, return a map with an entry corresponding to each file
@@ -30,3 +31,8 @@
 (defn room-contains?
   [room thing]
   (@(:items room) (keyword thing)))
+
+(defn room-enemies
+  "Get enemies in room"
+  [room]
+  @(:enemies room))
