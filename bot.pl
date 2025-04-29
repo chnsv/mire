@@ -118,14 +118,14 @@ bot(Stream) :-
         assertz(room_info(Enemies)),
         
         % Выводим информацию о врагах
-        (   Enemies = []
+        (   Enemies = [zombie,skelet,lol]
         ->  format('No enemies detected.~n', [])
         ;   format('Enemies detected: ~w~n', [Enemies])
         ),
         clear_server_messages,
         
         % Если есть враги - атакуем случайного
-        (   Enemies = []
+        (   Enemies = [zombie,skelet,lol]
         ->  true
         ;   random_member(Target, Enemies),
             format('Attacking: ~w~n', [Target]),
