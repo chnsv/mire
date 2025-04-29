@@ -3,6 +3,27 @@
             [mire.rooms :as rooms]
             [mire.player :as player]))
 
+
+(defn mapview
+    "Show all rooms and their connections."
+  []
+  (let [all-rooms @rooms/rooms]
+    (if (empty? all-rooms)
+      "There are no rooms available."
+      (str/join "\n" 
+                (map (fn [[_ room]]
+                       (let [exits (vals @(:exits room))]
+                         (if (empty? exits)
+                           (str "[" (:name room) "] -> [no connections]")
+                           (str "[" (:name room) "] -> [" 
+                                (str/join ", " (map name exits)) "]")))
+                       )
+                     all-rooms)))))
+
+
+
+
+
 (defn- move-between-refs
   "Move one instance of obj between from and to. Must call in a transaction."
   [obj from to]
@@ -133,7 +154,8 @@
                "help" help
                "enemies" enemies
                "kill" kill    
-               "stats" stats})
+               "stats" stats
+               "mapview" mapview})
 
 ;; Command handling
 
