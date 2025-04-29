@@ -10,7 +10,7 @@
 
 main :-
     sleep(5),
-    client(localhost, 3333).
+    client('localhost', 3333).
 
 client(Host, Port) :-
     setup_call_cleanup(
