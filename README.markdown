@@ -14,3 +14,8 @@
 
 # Mire
 It's a nonviolent MUD. (Multi-User Dungeon)
+
+# Usage
+First make sure that you have java installed on your machine. OpenJDK is recommended. It should be at least version 8, but newer versions (tested up to 17) should work too.
+
+Do ./lein run inside the Mire directory to launch the Mire server. Then players can connect by telnetting to port 3333.
