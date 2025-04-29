@@ -11,16 +11,24 @@
 main :-
     sleep(5),
     client(localhost, 3333).
- 
+
+
 client(Host, Port) :-
-    setup_call_cleanup(
-        tcp_connect(Host:Port, Stream, []),
-        (   thread_create(reader_thread(Stream), _, [detached(true)]),
-            bot(Stream)
-        ),
-        close(Stream)
+    (   catch(
+            setup_call_cleanup(
+                tcp_connect(Host:Port, Stream, []),
+                (   thread_create(reader_thread(Stream), _, [detached(true)]),
+                    bot(Stream)
+                ),
+                close(Stream)
+            ),
+            Error,
+            (   print_message(error, Error),
+                sleep(1),
+                client(Host, Port)  % переподключение
+            )
     ).
- 
+
 % Инициализация хранилища сообщений
 :- assertz(server_messages([])).
  
@@ -42,8 +50,9 @@ get_server_messages(Messages) :-
  
 get_last_message(Last) :-
     server_messages(Messages),
-    (   Messages = [] -> Last = "";
-        last(Messages, Last)
+    (   Messages = [] 
+    ->  Last = ""
+    ;   last(Messages, Last)
     ).
  
 clear_server_messages :-
