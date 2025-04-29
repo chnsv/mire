@@ -19,6 +19,23 @@
 
 ;; Command functions
 
+(defn kill
+  "Try to kill an enemy in the room."
+  [enemy]
+  (dosync
+   (if (@(:enemies @player/*current-room*) (keyword enemy))
+     (do
+       (alter (:enemies @player/*current-room*) disj (keyword enemy))
+       (alter player/*kills* inc) ; Увеличиваем счётчик убийств
+       (str "You killed the " enemy "! Total kills: " @player/*kills*))
+     (str "There is no " enemy " here to kill."))))
+
+(defn stats
+  "Show your statistics (kills count)."
+  []
+  (str "Your kills: " @player/*kills*))
+
+
 (defn look
   "Get a description of the surrounding environs and its contents."
   []
@@ -113,7 +130,10 @@
                "detect" detect
                "look" look
                "say" say
-               "help" help})
+               "help" help
+               "enemies" enemies
+               "kill" kill    
+               "stats" stats})
 
 ;; Command handling
 
