@@ -9,6 +9,14 @@
   (alter from disj obj)
   (alter to conj obj))
 
+(defn enemies
+  "Show enemies in current room."
+  []
+  (let [enemies-list (seq @(:enemies @player/*current-room*))]
+    (if (empty? enemies-list)
+      "There are no enemies here."
+      (str "Enemies here: " (str/join ", " enemies-list)))))
+
 ;; Command functions
 
 (defn look
@@ -17,7 +25,9 @@
   (str (:desc @player/*current-room*)
        "\nExits: " (keys @(:exits @player/*current-room*)) "\n"
        (str/join "\n" (map #(str "There is " % " here.\n")
-                           @(:items @player/*current-room*)))))
+                           @(:items @player/*current-room*)))
+       "\n"
+       (enemies)))
 
 (defn move
   "\"♬ We gotta get out of this place... ♪\" Give a direction."
