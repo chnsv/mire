@@ -5,7 +5,6 @@
 :- use_module(library(random)).
 :- use_module(library(thread)).
 :- use_module(library(lists)).
-
 :- dynamic server_messages/1.
 :- dynamic room_info/1. % Теперь храним только врагов
 
@@ -19,36 +18,12 @@ client(Host, Port) :-
         (   thread_create(reader_thread(Stream), _, [detached(true)]),
             bot(Stream)
         ),
-<<<<<<< HEAD
-        Error,
-        (format("Connection error: ~w~n", [Error]),
-         sleep(3),
-         client(Host, Port))
-=======
         close(Stream)
->>>>>>> 33738a91168d136e6b6f13f8d9073f17ea4f5d66
     ).
 
 % Инициализация хранилища сообщений
 :- assertz(server_messages([])).
 
-<<<<<<< HEAD
-% Поток для чтения сообщений
-reader_thread(Stream) :-
-    repeat,
-    (catch(
-        read_line_to_string(Stream, Line),
-        Error,
-        (format("Read error: ~w~n", [Error]), fail)
-     ),
-     (Line == end_of_file
-      -> !, true
-      ; (retract(server_messages(Current)),
-        (Current == [] -> Messages = [Line] ; append(Current, [Line], Messages)),
-        assertz(server_messages(Messages)),
-        fail
-     )
-=======
 % Поток для чтения сообщений от сервера
 reader_thread(Stream) :-
     repeat,
@@ -60,38 +35,21 @@ reader_thread(Stream) :-
             assertz(server_messages(New)),
             fail
         )
->>>>>>> 33738a91168d136e6b6f13f8d9073f17ea4f5d66
     ).
 
-% Получение сообщений от сервера
 get_server_messages(Messages) :-
     server_messages(Messages).
 
-% Получение последнего сообщения
 get_last_message(Last) :-
     server_messages(Messages),
-<<<<<<< HEAD
-    (Messages = [] -> Last = "" ; last(Messages, Last)).
-=======
     (   Messages = [] -> Last = "";
         last(Messages, Last)
     ).
->>>>>>> 33738a91168d136e6b6f13f8d9073f17ea4f5d66
 
-% Очистка сообщений
 clear_server_messages :-
     retractall(server_messages(_)),
     assertz(server_messages([])).
 
-<<<<<<< HEAD
-% Анализ информации о комнате
-parse_room_info(Messages, Enemies) :-
-    reverse(Messages, RevMessages),
-    (member(Line, RevMessages),
-     sub_string(Line, _, _, _, "Enemies")
-     -> parse_enemies(Line, Enemies)
-     ;  Enemies = []
-=======
 % Парсим только информацию о врагах из последней строки
 parse_room_info(Messages, Enemies) :-
     last(Messages, LastLine),
@@ -99,10 +57,8 @@ parse_room_info(Messages, Enemies) :-
         parse_enemies(LastLine, Enemies)
     ->  true
     ;   Enemies = [] % Если строка с врагами не найдена
->>>>>>> 33738a91168d136e6b6f13f8d9073f17ea4f5d66
     ).
 
-% Парсинг информации о врагах
 parse_enemies(Line, Enemies) :-
     % Заменяем все ":" кроме первого на пустую строку
     replace_all_but_first(Line, ":", "", CleanLine),
@@ -144,65 +100,11 @@ replace_all_but_first(String, Sub, SubLen, Replacement, FoundFirst, Acc, Result)
         atomic_list_concat(NewAcc, Result)
     ).
 
-% Основная логика бота
 bot(Stream) :-
-<<<<<<< HEAD
-    % Регистрация
-    format(Stream, 'bot~n', []),
-=======
     format(Stream,'~s~n',["bot"]),
->>>>>>> 33738a91168d136e6b6f13f8d9073f17ea4f5d66
     flush_output(Stream),
     sleep(5),
     
-<<<<<<< HEAD
-    % Главный цикл
-    repeat,
-    (look_around(Stream),
-     process_room(Stream),
-     random_move(Stream),
-     sleep(3),
-     fail).
-
-% Осмотр комнаты
-look_around(Stream) :-
-    format(Stream, 'look~n', []),
-    flush_output(Stream),
-    sleep(1).
-
-% Обработка информации о комнате
-process_room(Stream) :-
-    get_server_messages(Messages),
-    parse_room_info(Messages, Enemies),
-    (Enemies = []
-     -> format("Room is clear.~n", [])
-     ;  random_member(Target, Enemies),
-        format("Attacking ~w!~n", [Target]),
-        attack(Stream, Target)
-    ),
-    clear_server_messages.
-
-% Атака врага
-attack(Stream, Target) :-
-    format(Stream, 'kill ~w~n', [Target]),
-    flush_output(Stream),
-    sleep(1).
-
-% Случайное перемещение
-random_move(Stream) :-
-    random_between(1, 4, Direction),
-    direction_command(Direction, Command),
-    format("Moving ~w~n", [Command]),
-    format(Stream, '~w~n', [Command]),
-    flush_output(Stream),
-    sleep(1).
-
-% Преобразование направления в команду
-direction_command(1, 'move north').
-direction_command(2, 'move south').
-direction_command(3, 'move east').
-direction_command(4, 'move west').
-=======
     repeat,
     (   
         % Осматриваем комнату
@@ -255,4 +157,3 @@ direction_command(4, 'move west').
         sleep(5),
         fail
     ).
->>>>>>> 33738a91168d136e6b6f13f8d9073f17ea4f5d66
